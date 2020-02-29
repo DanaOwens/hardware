@@ -1,6 +1,5 @@
 !/usr/bin/env python
 
-
 """
 Simple function to determine if there are major movements with the IMU based on the yaw, pitch, and roll.
 """
