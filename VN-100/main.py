@@ -6,7 +6,6 @@ based on the yaw, pitch, and roll.
 """
 
 from vnpy import *
-import pandas as pd
 
 # Initialize values
 count = 0
@@ -16,6 +15,7 @@ prevRoll = 0
 yawAvg = 0
 pitchAvg = 0
 rollAvg = 0
+s = 0
 
 
 def checkYPR():
@@ -66,3 +66,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
