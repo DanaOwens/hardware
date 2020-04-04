@@ -10,16 +10,15 @@ from joblib import load
 import time
 
 
-def checkYPR(s, prevYaw, prevPitch, prevRoll):
+def checkYPR(s, prevYaw, prevPitch, prevRoll, model):
     # Algorithm: Compare the previous and current YPR values to assess major movement
         # Problem:
 			# Roll or pitch changes by 45 degrees or more
 		    # Yaw changes by 60 degrees or more
     currYPR = s.read_yaw_pitch_roll()
 
-    model = load('yprClassifier.joblib')
-    pred = model.predict([[prevYaw, prevPitch, prevRoll, currYPR.x, currYPR.y, currYPR.z]])
-    modelProblem = pred == [[0]]
+    pred = model.predict([[prevYaw, prevPitch, prevRoll, currYPR.x, currYPR.y, currYPR.z]])[0]
+    modelProblem = pred == 0
 
     problem = abs(currYPR.z - prevRoll) >= 45 or abs(currYPR.y - prevPitch) >= 45  or abs(currYPR.x - prevYaw) >= 60
     return modelProblem or problem
@@ -29,6 +28,7 @@ def main():
     # Setup sensor
     s = VnSensor()
     s.connect("COM5", 115200) # change the connection parameter appropriately
+    model = load('yprClassifier.joblib') # load classifier
 
     while(True):
         currYPR = s.read_yaw_pitch_roll()
@@ -36,7 +36,7 @@ def main():
         pitch = currYPR.y
         roll = currYPR.z
         time.sleep(0.5) # Delay 0.5 seconds
-        problem = checkYPR(s, yaw, pitch, roll)
+        problem = checkYPR(s, yaw, pitch, roll, model)
 
         if (problem):
         # Do something
