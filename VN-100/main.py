@@ -8,20 +8,8 @@ based on the yaw, pitch, and roll.
 from vnpy import *
 from joblib import load
 import time
-
-
-def checkYPR(s, prevYaw, prevPitch, prevRoll, model):
-    # Algorithm: Compare the previous and current YPR values to assess major movement
-        # Problem:
-			# Roll or pitch changes by 45 degrees or more
-		    # Yaw changes by 60 degrees or more
-    currYPR = s.read_yaw_pitch_roll()
-
-    pred = model.predict([[prevYaw, prevPitch, prevRoll, currYPR.x, currYPR.y, currYPR.z]])[0]
-    modelProblem = pred == 0
-
-    problem = abs(currYPR.z - prevRoll) >= 45 or abs(currYPR.y - prevPitch) >= 45  or abs(currYPR.x - prevYaw) >= 60
-    return modelProblem or problem
+import algorithms
+import funcs
 
 
 def main():
@@ -29,6 +17,7 @@ def main():
     s = VnSensor()
     s.connect("COM5", 115200) # change the connection parameter appropriately
     model = load('yprClassifier.joblib') # load classifier
+    file = "data.txt"
 
     while(True):
         currYPR = s.read_yaw_pitch_roll()
@@ -36,13 +25,24 @@ def main():
         pitch = currYPR.y
         roll = currYPR.z
         time.sleep(0.5) # Delay 0.5 seconds
-        problem = checkYPR(s, yaw, pitch, roll, model)
+
+        # [accX, accY, accZ, angRateX, angRateY, angRateZ, magX, magY, magZ, temp, pressure, attQ]
+        data = funcs.extraData(s)
+        f = open(file, "a+")
+        for val in data:
+            f.write(str(val) + " ")
+        
+        problem = algorithms.algorithm2(s, yaw, pitch, roll)
 
         if (problem):
         # Do something
             print("Problem")
+            f.write("Problem" + "\n")
         else:
             print("No problem")
+            f.write("No problem" + "\n")
+
+        f.close()
 
 
 if __name__ == "__main__":
