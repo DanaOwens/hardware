@@ -1,41 +1,40 @@
 /*
-Arduino Code Used to Read MaxSonar MB1013
-Version 1
-Started 10/11/20
+This code helps with distance detection using a MaxSonar ultrasonic rangefinder
+A library is available at: https://github.com/Diaoul/arduino-Maxbotix
+This code's original author belongs to Bruce Allen
+
+Date: October 18, 2020
 */
 
+// This code will use the PulseWidth (PW) to detect range
+
+// Use digital pin 7 to read PW from the device. Pin number does not change in this code
+const int pwPin = 7;
+
+// Store calculated value
+long pW, inches, cm, meters; 
+
 void setup() {
-  // If the Analog Voltage is being read:
-  const int anPin = 0;
-
-  // If the Pulse Width is being read:
-  const int pwPin1 = 3;
-
-  /*
-  Any other variables used in the code.
-  
-  Analog Voltage: long anVolt, mm, inches;
-  Pulse Width: long sensor, mm, inches;
-  */
-  
-  // Reading Analog Voltage and Pulse Width 
-  // 9600 sets the BAUD rate used to read the Arduino for software that can read a COM Port
+  // Creates serial connection to send results back to PC Console 
   Serial.begin(9600);
-  
-  // Reading Analog Voltage Output
-  anVolt = analogRead(anPin);
-  // Reading Pulse Width Output
-  sensor = pulseIn(pwPin1, HIGH);
-  // Convert bit count to mm to inches
-  mmAV = anVolt*5;
-  inchAV = mmAV/25.4
-  
-  mmPW = sensor;
-  inchPW = mmPW/25.4; 
 }
 
 void loop() {
-  read_sensor()
-  print_range();
-  delay(100);
+  pinMode(pwPin, INPUT);
+  
+  // Read pulse sent by device
+  // Conversion for PW: 147 uS per Inch
+  
+  pW = pulseIn(pwPin, HIGH);
+  // Convert to appropriate units
+  
+  inches = pW/147;
+  cm = inches * 2.54;
+  meters = cm/100;
+  
+  Serial.print("Distance from object is: ");
+  Serial.print(meters);
+  
+  // Delays reading by 500 milliseconds
+  delay(500);
 }
