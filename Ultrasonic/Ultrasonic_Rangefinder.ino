@@ -3,7 +3,7 @@ This code helps with distance detection using a MaxSonar ultrasonic rangefinder
 A library is available at: https://github.com/Diaoul/arduino-Maxbotix
 This code's original author belongs to Bruce Allen
 
-Date: October 18, 2020
+Date: November 1, 2020
 */
 
 // This code will use the PulseWidth (PW) to detect range
@@ -17,24 +17,27 @@ long pW, inches, cm, meters;
 void setup() {
   // Creates serial connection to send results back to PC Console 
   Serial.begin(9600);
+  pinMode(pwPin, INPUT);
 }
 
-void loop() {
-  pinMode(pwPin, INPUT);
-  
+void read_sensor() { 
   // Read pulse sent by device
   // Conversion for PW: 147 uS per Inch
-  
   pW = pulseIn(pwPin, HIGH);
+}
+
+void print_range(){
   // Convert to appropriate units
-  
   inches = pW/147;
   cm = inches * 2.54;
   meters = cm/100;
   
   Serial.print("Distance from object is: ");
-  Serial.print(meters);
+  Serial.print(meters); }
   
-  // Delays reading by 500 milliseconds
-  delay(500);
+void loop() { 
+  read_sensor();
+  print_range();
+  delay(500); // Delay reading by 500 milliseconds
 }
+
