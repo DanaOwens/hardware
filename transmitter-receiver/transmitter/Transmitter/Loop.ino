@@ -13,15 +13,13 @@ void loop()
     else{
         dist = 0; 
     }
-    sendMsg(Tf,dist);
-}
-
-void sendMsg(temp, dist)
-{
     // 0 means nothing was detected; 1 means there was a detectable object within sensor's proximity
     // Sends message
+    dtostrf(Tf, 6, 2, temp);
+    dtostrf(dist, 1, 0, distance);
     driver.send((uint8_t *)temp, strlen(temp));
-    driver.send((uint8_t *)dist, strlen(dist));
+    driver.send((uint8_t *)distance, strlen(distance));
     driver.waitPacketSent();
     delay(1000);
 }
+
