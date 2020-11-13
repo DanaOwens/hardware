@@ -1,2 +1,13 @@
-# hardware
-Repo for hardware subteam
+# Hardware
+The Hardware team's repo.
+
+## Current Team Members
+
+
+## Semester Goals
+
+
+
+
+
+
